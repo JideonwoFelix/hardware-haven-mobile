@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet, Image, Pressable } from 'react-native';
 import { Link } from 'expo-router';
 import { MapPin, User } from 'lucide-react-native';
-import { Post } from '../constants/data';
+import { Post } from '@/types';
 
 export default function PostCard({ post }: { post: Post }) {
   return (

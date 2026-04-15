@@ -1,11 +1,17 @@
 import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Settings, User, ShieldCheck, Briefcase, LogOut, ChevronRight } from 'lucide-react-native';
+import { LucideIcon, Settings, User, ShieldCheck, Briefcase, LogOut, ChevronRight } from 'lucide-react-native';
+
+interface MenuOptionProps {
+  icon: LucideIcon;
+  title: string;
+  subtitle?: string; // Optional since not all menu items need a subtitle
+}
 
 export default function ProfileScreen() {
   const insets = useSafeAreaInsets();
 
-  const MenuOption = ({ icon: Icon, title, subtitle }) => (
+  const MenuOption = ({ icon: Icon, title, subtitle }: MenuOptionProps) => (
     <TouchableOpacity style={styles.menuItem} activeOpacity={0.7}>
       <View style={styles.menuIconContainer}>
         <Icon size={20} color="#FF5722" />
