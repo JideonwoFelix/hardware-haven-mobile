@@ -22,9 +22,11 @@ export default function HomeScreen() {
     try {
       setError(false);
       const apiUrl = process.env.EXPO_PUBLIC_API_URL;
+      console.log("Fetching posts...", `${apiUrl}/posts`);
       // console.log(apiUrl);
       const response = await fetch(`${apiUrl}/posts`);
       const json = await response.json();
+      // console.log(json.data);
       
       // Laravel API Resources wrap data in a 'data' key
       setPosts(json.data); 
@@ -85,7 +87,7 @@ export default function HomeScreen() {
           <CloudOff size={48} color="#cbd5e1" />
           <Text style={styles.errorText}>Couldn&apos;t connect to server</Text>
           <TouchableOpacity onPress={fetchPosts} style={styles.retryButton}>
-            <Text style={styles.retryText}>Retry</Text>
+            <Text style={styles.retryText}>xRetry</Text>
           </TouchableOpacity>
         </View>
       ) : (
