@@ -1,3 +1,4 @@
+import { Platform } from 'react-native';
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import * as SecureStore from 'expo-secure-store';
 
@@ -18,12 +19,23 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   // Check for saved token on app startup
   useEffect(() => {
+    // ... inside your useEffect
     async function loadStorageData() {
-      const savedToken = await SecureStore.getItemAsync('userToken');
-      const savedUser = await SecureStore.getItemAsync('userData');
+      let savedToken, savedUser;
+
+      if (Platform.OS === 'web') {
+        // Fallback for Web
+        savedToken = localStorage.getItem('userToken');
+        savedUser = localStorage.getItem('userData');
+      } else {
+        // Native Mobile
+        savedToken = await SecureStore.getItemAsync('userToken');
+        savedUser = await SecureStore.getItemAsync('userData');
+      }
+
       if (savedToken) {
         setToken(savedToken);
-        setUser(JSON.parse(savedUser!));
+        setUser(savedUser ? JSON.parse(savedUser) : null);
       }
       setIsLoading(false);
     }
