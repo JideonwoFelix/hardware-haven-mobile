@@ -35,10 +35,6 @@
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
-          // ,
-          // "dark": {
-          //   "backgroundColor": "#000000"
-          // }
         }
       ],
       "expo-secure-store"
@@ -46,6 +42,12 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "ac949ff5-d969-499b-a806-11ece3f23846"
+      }
     }
   }
 }
