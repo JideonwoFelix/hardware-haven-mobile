@@ -1,3 +1,4 @@
+import { Link } from "expo-router";
 import React, { useState } from 'react';
 import { 
     View, Text, StyleSheet, TextInput, TouchableOpacity, 
@@ -48,41 +49,52 @@ export default function RegisterScreen() {
 
     return (
         <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-            <View style={styles.header}>
-                <Image source={require('../assets/images/partial-react-logo.png')} style={styles.logo} />
-                <Text style={styles.title}>Join Haven</Text>
-                <Text style={styles.subtitle}>Create your technician profile</Text>
-            </View>
-
-            <View style={styles.form}>
-                <View style={styles.inputGroup}>
-                    <User size={20} color="#94a3b8" />
-                    <TextInput placeholder="Full Name" style={styles.input} onChangeText={(v) => setForm({...form, name: v})} />
+            <View style={styles.inner}>
+                <View style={styles.header}>
+                    <Image source={require('../assets/images/icon.png')} style={styles.logo} />
+                    <Text style={styles.title}>Join Haven</Text>
+                    <Text style={styles.subtitle}>Create your technician profile</Text>
                 </View>
 
-                <View style={styles.inputGroup}>
-                    <Mail size={20} color="#94a3b8" />
-                    <TextInput placeholder="Email" style={styles.input} autoCapitalize="none" onChangeText={(v) => setForm({...form, email: v})} />
-                </View>
+                <View style={styles.form}>
+                    <View style={styles.inputGroup}>
+                        <User size={20} color="#94a3b8" />
+                        <TextInput placeholder="Full Name" placeholderTextColor={"#64748b"} style={styles.input} onChangeText={(v) => setForm({...form, name: v})} />
+                    </View>
 
-                <View style={styles.inputGroup}>
-                    <Store size={20} color="#94a3b8" />
-                    <TextInput placeholder="Shop Name (Optional)" style={styles.input} onChangeText={(v) => setForm({...form, shop_name: v})} />
-                </View>
+                    <View style={styles.inputGroup}>
+                        <Mail size={20} color="#94a3b8" />
+                        <TextInput placeholder="Email" placeholderTextColor={"#64748b"} style={styles.input} autoCapitalize="none" onChangeText={(v) => setForm({...form, email: v})} />
+                    </View>
 
-                <View style={styles.inputGroup}>
-                    <Lock size={20} color="#94a3b8" />
-                    <TextInput placeholder="Password" style={styles.input} secureTextEntry onChangeText={(v) => setForm({...form, password: v})} />
-                </View>
+                    <View style={styles.inputGroup}>
+                        <Store size={20} color="#94a3b8" />
+                        <TextInput placeholder="Shop Name (Optional)" style={styles.input} onChangeText={(v) => setForm({...form, shop_name: v})} />
+                    </View>
 
-                <View style={styles.inputGroup}>
-                    <Lock size={20} color="#94a3b8" />
-                    <TextInput placeholder="Confirm Password" style={styles.input} secureTextEntry onChangeText={(v) => setForm({...form, password_confirmation: v})} />
-                </View>
+                    <View style={styles.inputGroup}>
+                        <Lock size={20} color="#94a3b8" />
+                        <TextInput placeholder="Password" placeholderTextColor={"#64748b"} style={styles.input} secureTextEntry onChangeText={(v) => setForm({...form, password: v})} />
+                    </View>
 
-                <TouchableOpacity style={styles.btn} onPress={handleRegister} disabled={loading}>
-                    {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.btnText}>Register Account</Text>}
-                </TouchableOpacity>
+                    <View style={styles.inputGroup}>
+                        <Lock size={20} color="#94a3b8" />
+                        <TextInput placeholder="Confirm Password" placeholderTextColor={"#64748b"} style={styles.input} secureTextEntry onChangeText={(v) => setForm({...form, password_confirmation: v})} />
+                    </View>
+
+                    <TouchableOpacity style={styles.btn} onPress={handleRegister} disabled={loading}>
+                        {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.btnText}>Register Account</Text>}
+                    </TouchableOpacity>
+
+                    <View style={styles.footer}>
+                        <Text style={styles.footerText}>Already have an account? </Text>
+                        <Link href="/login" asChild>
+                        <TouchableOpacity>
+                            <Text style={styles.linkText}>Login</Text>
+                        </TouchableOpacity>
+                        </Link>
+                    </View>
+                </View>
             </View>
         </ScrollView>
     );
@@ -90,6 +102,7 @@ export default function RegisterScreen() {
 
 const styles = StyleSheet.create({
     container: { flex: 1, backgroundColor: '#fff' },
+    inner: { flex: 1, justifyContent: "center" },
     content: { padding: 30, paddingTop: 60 },
     header: { alignItems: 'center', marginBottom: 30 },
     logo: { width: 70, height: 70, marginBottom: 15 },
@@ -97,7 +110,10 @@ const styles = StyleSheet.create({
     subtitle: { color: '#64748b' },
     form: { gap: 12 },
     inputGroup: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#f8fafc', paddingHorizontal: 15, borderRadius: 15, borderWidth: 1, borderColor: '#e2e8f0', height: 58 },
-    input: { flex: 1, marginLeft: 10, fontSize: 16 },
+    input: { flex: 1, marginLeft: 10, fontSize: 16, color: "#000" },
     btn: { backgroundColor: '#FF5722', height: 58, borderRadius: 15, justifyContent: 'center', alignItems: 'center', marginTop: 10 },
-    btnText: { color: '#fff', fontSize: 18, fontWeight: '700' }
+    btnText: { color: '#fff', fontSize: 18, fontWeight: '700' },
+    footer: { flexDirection: "row", justifyContent: "center", marginTop: 30 },
+    footerText: { color: "#64748b" },
+    linkText: { color: "#FF5722", fontWeight: "700" },
 });

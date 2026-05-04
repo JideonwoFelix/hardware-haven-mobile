@@ -7,9 +7,11 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Search, MapPin, Bell, CloudOff } from 'lucide-react-native';
 import PostCard from '../../components/PostCard';
 import { Post } from '@/types';
+import { useAuth } from '@/context/AuthContext';
 
 export default function HomeScreen() {
   const insets = useSafeAreaInsets();
+  const { token } = useAuth();
   
   // 1. State Management
   const [posts, setPosts] = useState<Post[]>([]);
@@ -26,7 +28,7 @@ export default function HomeScreen() {
       // console.log(apiUrl);
       const response = await fetch(`${apiUrl}/posts`);
       const json = await response.json();
-      // console.log(json.data);
+      console.log(response);
       
       // Laravel API Resources wrap data in a 'data' key
       setPosts(json.data); 
@@ -40,8 +42,9 @@ export default function HomeScreen() {
   };
 
   useEffect(() => {
+    if (!token) return;
     fetchPosts();
-  }, []);
+  }, [token]);
 
   const onRefresh = () => {
     setRefreshing(true);

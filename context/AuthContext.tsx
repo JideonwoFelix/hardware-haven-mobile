@@ -18,31 +18,39 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [isLoading, setIsLoading] = useState(true);
 
   // Check for saved token on app startup
-  useEffect(() => {
-    // ... inside your useEffect
-    async function loadStorageData() {
+useEffect(() => {
+  async function loadStorageData() {
+    console.log('🔵 AuthContext: loadStorageData started');
+    try {
       let savedToken, savedUser;
 
       if (Platform.OS === 'web') {
-        // Fallback for Web
         savedToken = localStorage.getItem('userToken');
         savedUser = localStorage.getItem('userData');
       } else {
-        // Native Mobile
+        console.log('🔵 AuthContext: reading SecureStore...');
         savedToken = await SecureStore.getItemAsync('userToken');
+        console.log('🔵 AuthContext: savedToken =', savedToken);
         savedUser = await SecureStore.getItemAsync('userData');
+        console.log('🔵 AuthContext: savedUser =', savedUser);
       }
 
       if (savedToken) {
         setToken(savedToken);
         setUser(savedUser ? JSON.parse(savedUser) : null);
       }
+    } catch (error) {
+      console.error('🔴 AuthContext ERROR:', error);
+    } finally {
+      console.log('🟢 AuthContext: setIsLoading(false)');
       setIsLoading(false);
     }
-    loadStorageData();
-  }, []);
+  }
+  loadStorageData();
+}, []);
 
   const login = async (email: string, pass: string) => {
+    console.log(process.env.EXPO_PUBLIC_API_URL);
     const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

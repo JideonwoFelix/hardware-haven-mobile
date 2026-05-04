@@ -3,7 +3,7 @@ import { View, Text, Image, ScrollView, StyleSheet, ActivityIndicator, Touchable
 import { useState, useEffect } from 'react';
 import { MapPin, Phone, MessageCircle, Share2, ShieldCheck } from 'lucide-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Post } from '../../types';
+import { Post } from '@/types';
 
 export default function PostDetail() {
   const { id } = useLocalSearchParams();

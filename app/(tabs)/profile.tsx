@@ -1,6 +1,7 @@
 import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LucideIcon, Settings, User, ShieldCheck, Briefcase, LogOut, ChevronRight } from 'lucide-react-native';
+import { useAuth } from "@/context/AuthContext";
 
 interface MenuOptionProps {
   icon: LucideIcon;
@@ -10,6 +11,7 @@ interface MenuOptionProps {
 
 export default function ProfileScreen() {
   const insets = useSafeAreaInsets();
+  const { logout } = useAuth();
 
   const MenuOption = ({ icon: Icon, title, subtitle }: MenuOptionProps) => (
     <TouchableOpacity style={styles.menuItem} activeOpacity={0.7}>
@@ -59,7 +61,7 @@ export default function ProfileScreen() {
         <MenuOption icon={Settings} title="App Preferences" />
       </View>
 
-      <TouchableOpacity style={styles.logoutButton}>
+      <TouchableOpacity style={styles.logoutButton} onPress={logout}>
         <LogOut size={20} color="#ef4444" />
         <Text style={styles.logoutText}>Sign Out</Text>
       </TouchableOpacity>
