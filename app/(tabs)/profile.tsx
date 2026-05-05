@@ -1,20 +1,28 @@
-import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LucideIcon, Settings, User, ShieldCheck, Briefcase, LogOut, ChevronRight } from 'lucide-react-native';
 import { useAuth } from "@/context/AuthContext";
+import { useState } from 'react';
+import { useRouter } from 'expo-router';
+import UpdateProfileModal from '@/components/update-profile-modal';
 
 interface MenuOptionProps {
   icon: LucideIcon;
   title: string;
-  subtitle?: string; // Optional since not all menu items need a subtitle
+  subtitle?: string;
+  onPress?: () => void;
 }
 
 export default function ProfileScreen() {
   const insets = useSafeAreaInsets();
-  const { logout } = useAuth();
+  const { user, logout, token, updateUser } = useAuth(); // Get user from context
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [isModalVisible, setModalVisible] = useState(false);
+  const router = useRouter();
+  
 
-  const MenuOption = ({ icon: Icon, title, subtitle }: MenuOptionProps) => (
-    <TouchableOpacity style={styles.menuItem} activeOpacity={0.7}>
+  const MenuOption = ({ icon: Icon, title, subtitle, onPress }: MenuOptionProps) => (
+    <TouchableOpacity style={styles.menuItem} activeOpacity={0.7} onPress={onPress}>
       <View style={styles.menuIconContainer}>
         <Icon size={20} color="#FF5722" />
       </View>
@@ -26,38 +34,70 @@ export default function ProfileScreen() {
     </TouchableOpacity>
   );
 
+  // Function to initials (e.g., Felix Jideonwo -> FJ)
+  const getInitials = (name: string) => {
+    return name ? name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2) : '??';
+  };
+
+  const handleUpdateProfile = async () => {
+    setIsUpdating(true);
+    try {
+      const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/user/profile`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+          name: user.name, // In a real edit page, these would be from a local useState form
+          email: user.email,
+          shop_name: "Updated Shop Name" 
+        })
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        updateUser(data.user); // Update global state
+        Alert.alert("Success", "Profile Updated");
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
   return (
     <ScrollView style={[styles.container, { paddingTop: insets.top }]}>
-      {/* 1. Profile Header */}
       <View style={styles.header}>
         <View style={styles.avatarContainer}>
-          <Text style={styles.avatarPlaceholder}>JF</Text>
+          <Text style={styles.avatarPlaceholder}>{getInitials(user?.name)}</Text>
         </View>
-        <Text style={styles.userName}>Jideonwo Felix</Text>
-        <Text style={styles.userRole}>MD, THOTH Technologies</Text>
+        
+        {/* Real Dynamic Data */}
+        <Text style={styles.userName}>{user?.name || 'Technician'}</Text>
+        <Text style={styles.userRole}>{user?.shop_name || 'Independent Tech'}</Text>
+        
         <View style={styles.badge}>
           <ShieldCheck size={14} color="#16a34a" />
-          <Text style={styles.badgeText}>Verified Technician</Text>
+          <Text style={styles.badgeText}>Verified {user?.role || 'User'}</Text>
         </View>
       </View>
 
-      {/* 2. Stats Section */}
-      <View style={styles.statsRow}>
-        <View style={styles.statBox}>
-          <Text style={styles.statNumber}>12</Text>
-          <Text style={styles.statLabel}>Active Posts</Text>
-        </View>
-        <View style={[styles.statBox, styles.statBorder]}>
-          <Text style={styles.statNumber}>4.9</Text>
-          <Text style={styles.statLabel}>Rating</Text>
-        </View>
-      </View>
-
-      {/* 3. Menu Options */}
+      {/* Rest of your UI... */}
       <View style={styles.menuSection}>
         <Text style={styles.sectionLabel}>Business Management</Text>
-        <MenuOption icon={Briefcase} title="Shop Settings" subtitle="Abuja Branch & Salon" />
-        <MenuOption icon={User} title="Personal Details" />
+        
+        {/* UPDATE THIS LINE */}
+        <MenuOption 
+          icon={User} 
+          title="Personal Details" 
+          subtitle="Edit your name and shop"
+          onPress={() => setModalVisible(true)} 
+        />
+        
+        <MenuOption icon={Briefcase} title="Shop Settings" />
         <MenuOption icon={Settings} title="App Preferences" />
       </View>
 
@@ -65,6 +105,8 @@ export default function ProfileScreen() {
         <LogOut size={20} color="#ef4444" />
         <Text style={styles.logoutText}>Sign Out</Text>
       </TouchableOpacity>
+
+      <UpdateProfileModal isVisible={isModalVisible} onClose={() => setModalVisible(false)} updateUser={handleUpdateProfile} user={user} token={token} />
     </ScrollView>
   );
 }

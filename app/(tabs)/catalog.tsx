@@ -63,10 +63,13 @@ export default function CatalogScreen() {
   };
 
   const handleAddPost = async () => {
+    // 1. Client-side guard
     if (!form.title || !form.price || !image) {
-      return Alert.alert("Required", "Please provide a title, price, and a photo of the hardware.");
+      return Alert.alert("Missing Info", "Please provide a title, price, and a photo.");
     }
+
     setLoading(true);
+
     const formData = new FormData();
     formData.append('title', form.title);
     formData.append('price', form.price);
@@ -85,24 +88,33 @@ export default function CatalogScreen() {
     try {
       const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/posts`, {
         method: 'POST',
-        headers: { 
+        headers: {
           'Accept': 'application/json',
           'Authorization': `Bearer ${token}`,
         },
         body: formData
       });
 
+      const result = await response.json();
+
       if (response.ok) {
         Alert.alert("Success ✨", "Hardware listed successfully.");
         setForm(initialForm);
         setImage(null);
         setActiveTab('view');
+      } else if (response.status === 422) {
+        // 2. Handle Laravel Validation Errors
+        // Laravel returns errors as: { errors: { title: ["Too short"], price: ["Must be numeric"] } }
+        const errorMessages = Object.values(result.errors || {}).flat().join('\n');
+        Alert.alert("Validation Error", errorMessages || "Please check your inputs.");
       } else {
-        console.log(response);
-        Alert.alert("Error", "Check your inputs and try again.");
+        // 3. Handle Other Errors (401, 404, 500)
+        Alert.alert("Error", result.message || "Something went wrong on our end.");
       }
     } catch (e) {
-      Alert.alert("Error", "Connection failed.");
+      // 4. Handle Network Failures
+      Alert.alert("Network Error", "Unable to connect to the server. Please check your internet.");
+      console.error("Upload Error:", e);
     } finally {
       setLoading(false);
     }

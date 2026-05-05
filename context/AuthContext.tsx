@@ -7,6 +7,7 @@ interface AuthContextType {
   token: string | null;
   login: (email: string, pass: string) => Promise<void>;
   logout: () => Promise<void>;
+  updateUser: () => Promise<void>;
   isLoading: boolean;
 }
 
@@ -79,8 +80,13 @@ useEffect(() => {
     await SecureStore.deleteItemAsync('userData');
   };
 
+  const updateUser = async (updatedUser: any) => {
+    setUser(updatedUser);
+    await SecureStore.setItemAsync('userData', JSON.stringify(updatedUser));
+  };
+
   return (
-    <AuthContext.Provider value={{ user, token, login, logout, isLoading }}>
+    <AuthContext.Provider value={{ user, token, login, logout, isLoading, updateUser }}>
       {children}
     </AuthContext.Provider>
   );
